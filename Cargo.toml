@@ -1,8 +1,17 @@
 [package]
-name = "E2E_SDK"
+name = "e2esdk"
 version = "0.1.0"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+env_logger = "0.10.0"
+getopts = "0.2.21"
+log = "0.4.22"
+rand = "0.8.5"
+rsa = "0.9.6"
+
+[lib]
+name = "e2esdk"
+#crate-type = ["cdylib"]
