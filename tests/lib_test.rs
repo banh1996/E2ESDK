@@ -12,26 +12,40 @@ use std::path::Path;
 //     e2e
 // }
 
+struct KeyFileCleaner<'a> {
+    priv_key_path: &'a str,
+    pub_key_path: &'a str,
+}
+
+impl<'a> Drop for KeyFileCleaner<'a> {
+    fn drop(&mut self) {
+        fs::remove_file(self.priv_key_path).unwrap_or_else(|_| {
+            println!("Not found private key file to remove: {}", self.priv_key_path);
+        });
+        fs::remove_file(self.pub_key_path).unwrap_or_else(|_| {
+            println!("Not found public key file to remove: {}", self.pub_key_path);
+        });
+    }
+}
+
 #[test]
 fn test_generate_pairkey() {
     let priv_key_path = "private_key.pem";
     let pub_key_path = "public_key.pem";
+    let _cleaner = KeyFileCleaner { priv_key_path, pub_key_path };
 
     let mut e2e_rsa = E2eRSA2K::new();
     e2e_rsa.generate_pairkey(Path::new(priv_key_path), Path::new(pub_key_path)).unwrap();
 
     assert!(Path::new(priv_key_path).exists());
     assert!(Path::new(pub_key_path).exists());
-
-    // Cleanup generated key files
-    fs::remove_file(priv_key_path).unwrap();
-    fs::remove_file(pub_key_path).unwrap();
 }
 
 #[test]
 fn test_init_with_generated_keys() {
     let priv_key_path = "private_key.pem";
     let pub_key_path = "public_key.pem";
+    let _cleaner = KeyFileCleaner { priv_key_path, pub_key_path };
 
     // Generate the keys first
     let mut e2e_rsa = E2eRSA2K::new();
@@ -43,16 +57,13 @@ fn test_init_with_generated_keys() {
 
     assert!(init_result.is_ok());
     assert_eq!(e2e_rsa_initialized.is_initialized(), true);
-
-    // Cleanup generated key files
-    fs::remove_file(priv_key_path).unwrap();
-    fs::remove_file(pub_key_path).unwrap();
 }
 
 #[test]
 fn test_init_with_invalid_keys() {
     let priv_key_path = "invalid_private_key.pem";
     let pub_key_path = "invalid_public_key.pem";
+    let _cleaner = KeyFileCleaner { priv_key_path, pub_key_path };
 
     // Create invalid key files
     {
@@ -68,18 +79,16 @@ fn test_init_with_invalid_keys() {
 
     assert!(init_result.is_err());
     assert_eq!(e2e_rsa.is_initialized(), false);
-
-    // Cleanup invalid key files
-    fs::remove_file(priv_key_path).unwrap();
-    fs::remove_file(pub_key_path).unwrap();
 }
 
 #[test]
 fn test_encrypt_decrypt() {
     let test_message: &[u8] = b"Test message for RSA encryption";
-
     let priv_key_path = "private_key.pem";
     let pub_key_path = "public_key.pem";
+    let _cleaner = KeyFileCleaner { priv_key_path, pub_key_path };
+
+    let _cleaner = KeyFileCleaner { priv_key_path, pub_key_path };
 
     // Generate the keys first
     let mut e2e_rsa = E2eRSA2K::new();
@@ -97,10 +106,6 @@ fn test_encrypt_decrypt() {
 
     // Verify that the decrypted message is the same as the original message
     assert_eq!(decrypted_message, test_message);
-
-    // Cleanup generated key files
-    fs::remove_file(priv_key_path).unwrap();
-    fs::remove_file(pub_key_path).unwrap();
 }
 
 #[test]
@@ -119,9 +124,9 @@ fn test_encrypt_not_initialized() {
 #[test]
 fn test_decrypt_not_initialized() {
     let test_message: &[u8] = b"Test message for RSA encryption";
-
     let priv_key_path = "private_key.pem";
     let pub_key_path = "public_key.pem";
+    let _cleaner = KeyFileCleaner { priv_key_path, pub_key_path };
 
     // Generate the keys first
     let mut e2e_rsa = E2eRSA2K::new();
@@ -140,15 +145,4 @@ fn test_decrypt_not_initialized() {
     // Verify that the decryption fails because the instance is not initialized
     assert!(result.is_err());
     assert_eq!(result.unwrap_err().kind(), io::ErrorKind::Other);
-
-    // Cleanup generated key files
-    fs::remove_file(priv_key_path).unwrap();
-    fs::remove_file(pub_key_path).unwrap();
 }
-
-// Clean up key files after tests
-// #[test]
-// fn cleanup() {
-//     fs::remove_file(TEST_PRIV_KEY_PATH).ok();
-//     fs::remove_file(TEST_PUB_KEY_PATH).ok();
-// }

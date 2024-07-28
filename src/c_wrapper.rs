@@ -5,12 +5,17 @@ use std::ffi::CStr;
 use std::os::raw::c_char;
 
 #[no_mangle]
-pub extern "C" fn e2e_create_instance() -> *mut E2eRSA2K {
+pub extern "C" fn hello_from_rust() {
+    println!("Hello from Rust!");
+}
+
+#[no_mangle]
+pub extern "C" fn e2e_new() -> *mut E2eRSA2K {
     Box::into_raw(Box::new(E2eRSA2K::new()))
 }
 
 #[no_mangle]
-pub extern "C" fn e2e_destroy_instance(ptr: *mut E2eRSA2K) {
+pub extern "C" fn e2e_free(ptr: *mut E2eRSA2K) {
     if !ptr.is_null() {
         unsafe {
             drop(Box::from_raw(ptr)); // drop the Box
