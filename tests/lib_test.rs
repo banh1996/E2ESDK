@@ -1,5 +1,4 @@
 use e2esdk::{E2eCyber, E2eRSA2K};
-use rand::rngs::OsRng;
 use std::fs::{self, File};
 use std::io::{self, Write};
 use std::path::Path;
