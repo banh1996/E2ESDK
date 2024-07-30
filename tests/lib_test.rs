@@ -1,7 +1,8 @@
-use e2esdk::{E2eCyber, E2eRSA2K};
+use e2esdk::{self, E2eCyber, E2eRSA2K};
 use std::fs::{self, File};
 use std::io::{self, Write};
-use std::path::Path;
+use std::path::{Path, PathBuf};
+use tempdir::TempDir;
 
 // fn setup() -> E2eRSA2K {
 //     let mut e2e = E2eRSA2K::new();
@@ -146,3 +147,53 @@ fn test_decrypt_not_initialized() {
     assert!(result.is_err());
     assert_eq!(result.unwrap_err().kind(), io::ErrorKind::Other);
 }
+
+
+/*****************************************************************************************************************
+ * Start testing for ex-secure
+ *****************************************************************************************************************/
+const PASSWORD: &str = "12345678aA@";
+
+fn create_test_file(dir: &TempDir, name: &str, content: &[u8]) -> PathBuf {
+    let file_path = dir.path().join(name);
+    let mut file = File::create(&file_path).unwrap();
+    file.write_all(content).unwrap();
+    file_path
+}
+
+#[test]
+fn test_encrypt_folder() {
+    let dir = TempDir::new("test_encrypt_folder").unwrap();
+    let file_path = create_test_file(&dir, "test.txt", b"test_encrypt_folder Hello world!");
+
+    e2esdk::encrypt_folder(dir.path(), PASSWORD).unwrap();
+
+    let encrypted_content = fs::read(&file_path).unwrap();
+    assert_ne!(encrypted_content, b" test_encrypt_folderHello world!");
+}
+
+#[test]
+fn test_decrypt_folder() {
+    let dir = TempDir::new("test_decrypt_folder").unwrap();
+    let file_path = create_test_file(&dir, "test.txt", b"test_decrypt_folder Hello world!");
+
+    e2esdk::encrypt_folder(dir.path(), PASSWORD).unwrap();
+    e2esdk::decrypt_folder(dir.path(), PASSWORD).unwrap();
+
+    let decrypted_content = fs::read(&file_path).unwrap();
+    assert_eq!(decrypted_content, b"test_decrypt_folder Hello world!");
+}
+
+#[test]
+fn test_decrypt_file() {
+    let dir = TempDir::new("test_decrypt_file").unwrap();
+    let file_path = create_test_file(&dir, "test.txt", b"test_decrypt_file Hello world!");
+
+    e2esdk::encrypt_folder(dir.path(), PASSWORD).unwrap();
+
+    let decrypted_content = e2esdk::decrypt_file(&file_path, PASSWORD).unwrap();
+    assert_eq!(decrypted_content, b"test_decrypt_file Hello world!");
+}
+/*****************************************************************************************************************
+ * End testing for ex-secure
+ *****************************************************************************************************************/

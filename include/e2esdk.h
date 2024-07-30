@@ -30,6 +30,14 @@ bool e2e_encrypt(E2eRSA2K* ptr, const unsigned char* message, size_t message_len
 // Decrypt a message
 bool e2e_decrypt(E2eRSA2K* ptr, const unsigned char* encrypted_message, size_t encrypted_message_len, unsigned char* decrypted_message, size_t* decrypted_message_len);
 
+
+/*************** Start Secure folder API **********************/
+bool e2e_encrypt_folder(const char* folder_path, const char* password);
+bool e2e_decrypt_folder(const char* folder_path, const char* password);
+size_t e2e_decrypt_file(const char* file_path, const char* password, char *outbuf);
+void e2e_free_data(void* data);
+/*************** End Secure folder API **********************/
+
 #ifdef __cplusplus
 }
 #endif
