@@ -110,6 +110,18 @@ pub fn decrypt_folder(folder_path: &Path, password: &str) -> io::Result<()> {
     Ok(())
 }
 
+//this function will encrypt file and overwrite the existed file
+pub fn encrypt_file(file_path: &Path, password: &str) -> io::Result<()> {
+    let mut file = File::open(file_path)?;
+    let mut buffer = Vec::new();
+    file.read_to_end(&mut buffer)?;
+
+    let key = hash_aes_key(password);
+    encrypt_file_and_save(&file_path, &key)?;
+    Ok(())
+}
+
+//this function will decrypt file and return the plaintext, not overwrite existed file
 pub fn decrypt_file(file_path: &Path, password: &str) -> Result<Vec<u8>, io::Error> {
     let mut file = File::open(file_path)?;
     let mut buffer = Vec::new();

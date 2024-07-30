@@ -52,6 +52,38 @@ pub extern "C" fn e2e_init(
 }
 
 #[no_mangle]
+pub extern "C" fn e2e_generate_pairkey_withexsecure(
+    ptr: *mut E2eRSA2K,
+    priv_key_path: *const c_char,
+    pub_key_path: *const c_char,
+    password: *const c_char
+) -> bool {
+    let instance = unsafe { &mut *ptr };
+    let priv_key_path = unsafe { CStr::from_ptr(priv_key_path).to_str().unwrap() };
+    let pub_key_path = unsafe { CStr::from_ptr(pub_key_path).to_str().unwrap() };
+    let path_priv = Path::new(priv_key_path);
+    let path_pub = Path::new(pub_key_path);
+    let password = unsafe { CStr::from_ptr(password).to_str().unwrap() };
+    instance.generate_pairkey_withexsecure(path_priv, path_pub, password).is_ok()
+}
+
+#[no_mangle]
+pub extern "C" fn e2e_init_withexsecure(
+    ptr: *mut E2eRSA2K,
+    priv_key_path: *const c_char,
+    pub_key_path: *const c_char,
+    password: *const c_char
+) -> bool {
+    let instance = unsafe { &mut *ptr };
+    let priv_key_path = unsafe { CStr::from_ptr(priv_key_path).to_str().unwrap() };
+    let pub_key_path = unsafe { CStr::from_ptr(pub_key_path).to_str().unwrap() };
+    let path_priv = Path::new(priv_key_path);
+    let path_pub = Path::new(pub_key_path);
+    let password = unsafe { CStr::from_ptr(password).to_str().unwrap() };
+    instance.init_withexsecure(path_priv, path_pub, password).is_ok()
+}
+
+#[no_mangle]
 pub extern "C" fn e2e_encrypt(
     ptr: *const E2eRSA2K,
     message: *const u8,

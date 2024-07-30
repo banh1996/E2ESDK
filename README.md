@@ -1,5 +1,12 @@
 # E2EE SDK
 
+## Introduce
+SDK provides E2E functions that can encrypt/decrypt your message with RSA-2K algo.
+If you don't own pair-key, call generate_pairkey, then call init to import the pair-key.
+extra feature: you can secure you secret keys with generate_pairkey_withexsecure and init_withexsecure functions
+
+Note: Even though secret-keys are secured by password with AES128-ctr method, but since keys are store in your application(normally in RAM) so they(secret keys) can still be leaked out by dumping memory method. So it's better to store keys in HSM machine or improve code to limit plain-key lifetime, only accept plain-keys exist in application below second.
+
 ## Install pre-requisites
 1. Install build system packages
 	```bash
