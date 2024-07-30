@@ -1,0 +1,39 @@
+name: E2E-SDK CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        rust-version: [1.65.0]
+        target: [x86_64-pc-windows-msvc, x86_64-unknown-linux-gnu, x86_64-apple-ios, x86_64-linux-android]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Rust
+        uses: actions/setup-rust@v1
+        with:
+          rust-version: ${{ matrix.rust-version }}
+
+      - name: Install target
+        run: rustup target add ${{ matrix.target }}
+
+      - name: Build
+        run: cargo build --target ${{ matrix.target }}
+
+      - name: Test
+        run: |
+          cargo build
+          cargo rustc --crate-type=cdylib
+          cargo test -- --nocapture --test-threads=1
