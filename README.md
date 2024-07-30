@@ -10,6 +10,7 @@
     $ rustup target add x86_64-pc-windows-msvc
 	$ rustup target add aarch64-apple-ios x86_64-apple-ios
     $ rustup target add aarch64-linux-android x86_64-linux-android
+	$ cargo install cargo-ndk
 	```
 
 3. Local packages
@@ -27,6 +28,7 @@
     $ cargo build --target aarch64-linux-android
     $ cargo build --target x86_64-linux-android
 	$ cargo rustc --crate-type=cdylib
+	$ cargo ndk --target aarch64-linux-android -- cargo build
 	```
 Note: Because cargo currently doesn't support build multiple architect at the same time, so "cargo test" cannot work in case --crate-type=cdylib since the tests cannot link to cdylib (only supported lib, rlib). So add crate-type = ["cdylib"] or crate-type = ["dylib"] whatever you want to cross-compile as your will.
 
@@ -72,3 +74,6 @@ Then you can use e2e shared library for your android project, point to shared li
 	$ sudo ./deploy/install_sdk_ios.sh
 	```
 Then you can use e2e shared library for your ios project, point to shared library libe2esdk.so manually if not work.
+
+## Continous Integration
+Build/Run for Linux/MacOS/Window platform, check in Actions tab at github
