@@ -15,6 +15,6 @@ mkdir -p "$HEADER_DIR"
 
 # Copy the shared library and header file
 cp "$BUILD_DIR/lib${SDK_NAME}.so" "$INSTALL_DIR/"
-cp include/e2e_sdk.h "$HEADER_DIR/"
+cp include/e2esdk.h "$HEADER_DIR/"
 
 echo "SDK installation complete for Linux."

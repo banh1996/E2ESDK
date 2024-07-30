@@ -1,22 +1,32 @@
 @echo off
 setlocal
 
-:: Define variables
+REM Define source directories
 set SDK_NAME=e2esdk
 set BUILD_DIR=target\release
-set INSTALL_DIR=C:\Program Files\MySDK
+set SOURCE_DIR=include
 
-:: Ensure the install directory exists
-if not exist "%INSTALL_DIR%" mkdir "%INSTALL_DIR%"
+REM Define installation directories
+set SDK_INSTALL_DIR=C:\Program Files\E2ESDK
+set INCLUDE_DIR=%SDK_INSTALL_DIR%\include
+set LIB_DIR=%SDK_INSTALL_DIR%\lib
 
-:: Build the Rust SDK
-@REM cargo build --release
+REM Create installation directories
+if not exist "%INCLUDE_DIR%" mkdir "%INCLUDE_DIR%"
+if not exist "%LIB_DIR%" mkdir "%LIB_DIR%"
 
-:: Copy the DLL to the install directory
+REM Copy the header files
+echo Copying header files...
+xcopy /Y /I "%SOURCE_DIR%\*.h" "%INCLUDE_DIR%"
+
+REM Copy the shared library DLL to the install directory
+echo Copying shared library...
 copy "%BUILD_DIR%\%SDK_NAME%.dll" "%INSTALL_DIR%"
 
-:: Copy the header file to the install directory
-copy "include\e2e_sdk.h" "%INSTALL_DIR%"
+REM Optionally, add SDK to PATH, you need to set PATH permanently
+echo Adding SDK to system PATH...
+setx PATH "%PATH%;%LIB_DIR%"
 
-echo SDK installation complete for Windows.
+echo E2E SDK installation complete.
 endlocal
+pause

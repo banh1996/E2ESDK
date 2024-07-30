@@ -28,7 +28,7 @@
     $ cargo build --target x86_64-linux-android
 	$ cargo rustc --crate-type=cdylib
 	```
-Note: Because cargo currently doesn't support build multiple architect at the same time, so "cargo test" cannot work in case --crate-type=cdylib since the tests cannot link to cdylib (only supported lib, rlib). So add crate-type = ["cdylib"] or whatever you want to cross-compile as your will.
+Note: Because cargo currently doesn't support build multiple architect at the same time, so "cargo test" cannot work in case --crate-type=cdylib since the tests cannot link to cdylib (only supported lib, rlib). So add crate-type = ["cdylib"] or crate-type = ["dylib"] whatever you want to cross-compile as your will.
 
 ## Run & Test
 1. Clone this repo to local and cd to the cloned repo.
@@ -49,5 +49,26 @@ For C wrapper test, you need to make sure gcc available, if not install it.
 
 4. Note: For Window platform, you need to install MinGW-w64 gcc to run the tests.
 
-## Integrity
-1. Include to your project
+## Deployment
+From e2esdk folder run 1 of these commands base on your target architect:
+1. Linux:
+	```bash
+	$ sudo ./deploy/install_sdk_linux.sh
+	```
+
+2. Window, run with admin priviledge
+	```bash
+	$ sudo ./deploy/install_sdk_window.sh
+	```
+
+3. Android, add your project folder to script and run
+	```bash
+	$ sudo ./deploy/install_sdk_android.sh /path/to/your/android-ndk
+	```
+Then you can use e2e shared library for your android project, point to shared library libe2esdk.so manually if not work.
+
+4. iOS, I expect you rn it in MacOS
+	```bash
+	$ sudo ./deploy/install_sdk_ios.sh
+	```
+Then you can use e2e shared library for your ios project, point to shared library libe2esdk.so manually if not work.

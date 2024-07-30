@@ -12,10 +12,10 @@ mkdir -p "$INSTALL_DIR"
 # Deploy the Rust SDK for all iOS targets
 for TARGET in "${TARGETS[@]}"; do
     # cargo build --target $TARGET --release
-    cp "$BUILD_DIR/$TARGET/lib${SDK_NAME}.a" "$INSTALL_DIR/"
+    cp "$BUILD_DIR/$TARGET/lib${SDK_NAME}.dylib" "$INSTALL_DIR/"
 done
 
 # Copy the header file
-cp include/e2e_sdk.h "$INSTALL_DIR/"
+cp include/e2esdk.h "$INSTALL_DIR/"
 
 echo "SDK installation complete for iOS."
