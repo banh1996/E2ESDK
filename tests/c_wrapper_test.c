@@ -147,6 +147,7 @@ int main(int argc, char *argv[]) {
             return -1;
         }
     } else {
+        printf("argument not expected\n");
         return -1;
     }
 
