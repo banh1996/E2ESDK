@@ -150,7 +150,7 @@ fn encrypt(&self, message: &[u8]) -> Result<Vec<u8>, io::Error> {
  *  e2esdk::decrypt function
  *  brief        Decrypt message with provisioned private-key
  *  details      Call this function to decrypt message
- *  \param[in]   message: message to encrypt
+ *  \param[in]   message: message to decrypt
  *  \param[out]  -
  *  \precondition: Call init before using this function
  *  \reentrant:  FALSE
@@ -195,7 +195,6 @@ pub fn new_with_key_files(priv_key_path: &str, pub_key_path: &str) -> Self {
 pub fn is_initialized(&self) -> bool {
     *self.isinit.lock().unwrap()
 }
-
 }
 /*****************************************************************************************************************
  * End implementation for E2eRSA2K object

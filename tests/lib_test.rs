@@ -4,15 +4,6 @@ use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use tempdir::TempDir;
 
-// fn setup() -> E2eRSA2K {
-//     let mut e2e = E2eRSA2K::new();
-//     e2e.generate_pairkey(Path::new(TEST_PRIV_KEY_PATH), Path::new(TEST_PUB_KEY_PATH))
-//         .expect("Failed to generate key pair");
-//     e2e.init(Path::new(TEST_PRIV_KEY_PATH), Path::new(TEST_PUB_KEY_PATH))
-//         .expect("Failed to initialize with key files");
-//     e2e
-// }
-
 struct KeyFileCleaner<'a> {
     priv_key_path: &'a str,
     pub_key_path: &'a str,

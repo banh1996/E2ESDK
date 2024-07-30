@@ -1,4 +1,3 @@
-//use super::E2eRSA2K;
 use crate::e2e_implementation::{E2eCyber, E2eRSA2K};
 use crate::exsecure;
 use std::path::Path;
@@ -6,7 +5,7 @@ use std::ffi::{CStr, CString};
 use std::os::raw::{c_char, c_void};
 
 #[no_mangle]
-pub extern "C" fn hello_from_rust() {
+pub extern "C" fn hello_from_rust() { //testing function
     println!("Hello from Rust!");
 }
 
