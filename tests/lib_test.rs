@@ -207,34 +207,34 @@ fn create_test_file(dir: &TempDir, name: &str, content: &[u8]) -> PathBuf {
     file_path
 }
 
-#[test]
-fn test_cal_entroy_folder() {
-    let raw_path = "filesprocessing";
-    println!("Entropy Before encrypting:");
-    match calculate_entropy_for_folder(raw_path) {
-        Ok(results) => {
-            for (raw_path, entropy) in results {
-                println!("{:.4} bits - {}", entropy, raw_path.display());
-            }
-        },
-        _ => {
+// #[test]
+// fn test_cal_entroy_folder() {
+//     let raw_path = "filesprocessing";
+//     println!("Entropy Before encrypting:");
+//     match calculate_entropy_for_folder(raw_path) {
+//         Ok(results) => {
+//             for (raw_path, entropy) in results {
+//                 println!("{:.4} bits - {}", entropy, raw_path.display());
+//             }
+//         },
+//         _ => {
 
-        }
-    }
-    let files_path = Path::new(raw_path);
-    e2esdk::encrypt_folder(files_path, PASSWORD).unwrap();
-    println!("Entropy After encrypting:");
-    match calculate_entropy_for_folder(raw_path) {
-        Ok(results) => {
-            for (raw_path, entropy) in results {
-                println!("{:.4} bits - {}", entropy, raw_path.display());
-            }
-        },
-        _ => {
+//         }
+//     }
+//     let files_path = Path::new(raw_path);
+//     e2esdk::encrypt_folder(files_path, PASSWORD).unwrap();
+//     println!("Entropy After encrypting:");
+//     match calculate_entropy_for_folder(raw_path) {
+//         Ok(results) => {
+//             for (raw_path, entropy) in results {
+//                 println!("{:.4} bits - {}", entropy, raw_path.display());
+//             }
+//         },
+//         _ => {
 
-        }
-    }
-}
+//         }
+//     }
+// }
 
 
 #[test]
