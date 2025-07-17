@@ -145,12 +145,97 @@ fn test_decrypt_not_initialized() {
  *****************************************************************************************************************/
 const PASSWORD: &str = "12345678aA@";
 
+use std::io::{BufReader, Read};
+use std::error::Error;
+
+fn calculate_entropy(path: &Path) -> Result<f64, Box<dyn Error>> {
+    let file = File::open(path)?;
+    let mut reader = BufReader::new(file);
+    let mut buffer = Vec::new();
+    reader.read_to_end(&mut buffer)?;
+
+    if buffer.is_empty() {
+        return Ok(0.0);
+    }
+
+    let mut counts = [0usize; 256];
+    for &byte in &buffer {
+        counts[byte as usize] += 1;
+    }
+
+    let total = buffer.len() as f64;
+    let mut entropy = 0.0;
+
+    for &count in &counts {
+        if count > 0 {
+            let p = count as f64 / total;
+            entropy -= p * p.log2();
+        }
+    }
+
+    Ok(entropy)
+}
+
+/// Recursively calculate entropy for all files in a folder
+fn calculate_entropy_for_folder<P: AsRef<Path>>(
+    folder: P,
+) -> Result<Vec<(PathBuf, f64)>, Box<dyn Error>> {
+    let mut results = Vec::new();
+
+    for entry in fs::read_dir(folder)? {
+        let entry = entry?;
+        let path = entry.path();
+
+        if path.is_file() {
+            match calculate_entropy(&path) {
+                Ok(entropy) => results.push((path, entropy)),
+                Err(err) => eprintln!("Failed to process {}: {}", path.display(), err),
+            }
+        } else if path.is_dir() {
+            let nested = calculate_entropy_for_folder(&path)?;
+            results.extend(nested);
+        }
+    }
+
+    Ok(results)
+}
+
 fn create_test_file(dir: &TempDir, name: &str, content: &[u8]) -> PathBuf {
     let file_path = dir.path().join(name);
     let mut file = File::create(&file_path).unwrap();
     file.write_all(content).unwrap();
     file_path
 }
+
+#[test]
+fn test_cal_entroy_folder() {
+    let raw_path = "filesprocessing";
+    println!("Entropy Before encrypting:");
+    match calculate_entropy_for_folder(raw_path) {
+        Ok(results) => {
+            for (raw_path, entropy) in results {
+                println!("{:.4} bits - {}", entropy, raw_path.display());
+            }
+        },
+        _ => {
+
+        }
+    }
+    let files_path = Path::new(raw_path);
+    e2esdk::encrypt_folder(files_path, PASSWORD).unwrap();
+    println!("Entropy After encrypting:");
+    match calculate_entropy_for_folder(raw_path) {
+        Ok(results) => {
+            for (raw_path, entropy) in results {
+                println!("{:.4} bits - {}", entropy, raw_path.display());
+            }
+        },
+        _ => {
+
+        }
+    }
+}
+
 
 #[test]
 fn test_encrypt_folder() {
